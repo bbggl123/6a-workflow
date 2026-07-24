@@ -18,4 +18,10 @@
 - 用户输入做校验与防注入；不向前端暴露内部错误。
 - 日志脱敏，禁止记录密钥与个人隐私明文。
 
+## Git 红线（多 Agent 共享分支 · 详见 `workflows/git-shield.md`）
+- 执行 Agent 绝不 `git reset --hard` / `push -f` / `branch -D/-f` / `checkout -- .` / `clean -f`。
+- 绝不创建 `.bundle` 或 `_v2_*` / `_verify_*` / `.git` 拷贝等垃圾文件。
+- 提交后若发现提交消失 / HEAD 被外部改动 → **消失即停**，交 Lead 非破坏恢复（tag + reset --soft），禁止 Worker 自行重建历史或强推。
+- 恢复动作只能由 Lead 在所有 Worker 停止后串行执行。
+
 <!-- 追加格式：## [日期] 新红线主题 / 触发场景 / 修正动作 -->

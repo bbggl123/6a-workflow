@@ -16,8 +16,13 @@
 
 ## 边治理（可靠性活在边上）
 - 规划→执行：须 Approve 签收。
-- 执行→评估：须 PR + CI 门禁通过。
+- 执行→执行（并行 Worker 共享分支）：遵守 `workflows/git-shield.md` 的「消失即停」防御，禁止 Worker 强推/硬重置。
+- 执行→评估：须 PR + CI 门禁通过，且先校验 Git 引用完整性（HEAD == 预期后代）。
 - 评估→规划（回环）：反馈须结构化到任务编号 + 原因。
+
+## 多 Agent 共享分支保护（阶段5 专用）
+- 多个执行 Agent 在同一分支并行提交时，启用 `workflows/git-shield.md` 保护盾。
+- 若分支引用被环境重置：Lead 用 tag + `reset --soft` 非破坏恢复，绝不 `reset --hard`。详见该文件。
 
 ## 文档存放
 ```

@@ -11,7 +11,7 @@
 | 角色 | 可用 | 禁用 |
 |---|---|---|
 | 规划 Agent | 读文件、检索、文档生成 | 直接写业务代码、执行部署 |
-| 执行 Agent | 编码、运行测试、Git/PR | 改 DESIGN/TASK 文档范围、删库 |
+| 执行 Agent | 编码、运行测试、`git add`/`git commit`、开 PR | 改 DESIGN/TASK 范围、删库、`reset --hard`、`push -f`、`branch -D/-f`、`clean -f` |
 | 评估 Agent | 读代码/测试/文档、运行验证 | 改业务代码、自动合入主分支 |
 | 守门员 Agent | 读全部、拦截、标注 | 写业务产出 |
 

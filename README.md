@@ -86,7 +86,22 @@
 | **结构冲突** | 速度、深度、质量互相打架时没人裁决 | **仲裁环**（阶段4 分级交还 + 阶段5 预算审查） |
 | **向上盲区** | AI 埋头执行，却无法质疑"目标本身对不对" | **元环**（阶段4 人工审批） |
 
-再加上 **外部锚点体系**（Grounding Anchors）：每个阶段至少要触碰一类不可被 AI 篡改的外部验证源——**人类判断**、**物理验证**（`exit 0`/编译通过）、**冻结规则**、**数据现实**、**同行评审**；最终验收必须同时满足 ≥3 类锚点。当所有验证都来自 AI 自测时，触发"互确认警报",强制引入外部锚点。
+再加上 **外部锚点体系**（Grounding Anchors）：每个阶段至少要触碰一类不可被 AI 篡改的外部验证源——**人类判断**、**物理验证**（`exit 0`/编译通过）、**Git 引用完整性**（`cat-file`/`diff --stat` 客观校验，v3 新增）、**冻结规则**、**数据现实**、**同行评审**；最终验收必须同时满足 ≥3 类锚点。当所有验证都来自 AI 自测时，触发"互确认警报",强制引入外部锚点。
+
+---
+
+## 五之二、多 Agent 共享分支保护盾（v3 新增）
+
+当你用多个 Agent 队友在**同一条 git 分支**上并行执行阶段5 时，可能遇到一个隐蔽故障：某 Agent 报"完成"后，分支 HEAD 却被执行环境悄悄挪回旧基线，提交像"消失"了。这**不是数据丢失，也不是流氓 Agent**——提交对象仍在（`git cat-file -t <hash>` 返回 commit），只是引用被重定位。
+
+6A v3 内置**分支保护盾**来兜底：
+
+| 角色 | 规则 |
+|---|---|
+| **Worker（执行 Agent）** | 守「消失即停」：绝不 `reset --hard`/`push -f`/`branch -D`；提交消失就停手报告，绝不自行抢救重写历史 |
+| **Lead（协调/守门员）** | 非破坏恢复：`git tag -f <tag> <lost_hash>` 锚定 → `git reset --soft <tag>` 推回指针（零代码丢失）→ 重跑测试全绿 |
+
+> 完整操作手册见 [`project-skeleton/workflows/git-shield.md`](./project-skeleton/workflows/git-shield.md) 与 `6A.md` 第七章.8。多 Agent 团队执行前必读。
 
 > 完整协议（含每阶段详细步骤、门控清单、嵌套环拓扑图、锚点规则、PR/CI 治理）见 **[`6A.md`](./6A.md)** —— 这是本工作流的唯一权威来源。
 
@@ -102,6 +117,7 @@
 | `SKILL.md` | WorkBuddy 用的接入壳（指向 `6A.md`） |
 | `adapters/` | 其他平台的即贴片段：Claude / Cursor / 通用 system prompt |
 | `project-skeleton/` | 在任意项目里落地 6A 的 ISA 目录骨架 |
+| `project-skeleton/workflows/git-shield.md` | **多 Agent 共享分支保护盾**（v3）：引用重置检测 + 非破坏恢复 + Worker 防御红线 |
 
 ### 安装方式（任选其一）
 
@@ -142,7 +158,7 @@ your-project/
 ├─ best-practices/      # 各角色范例与反例
 ├─ knowledge/           # 共享状态（红线库 / 反模式 / 成功模式 / 纠正记录）
 ├─ tools/               # 各角色可用/禁用工具集与约束
-├─ workflows/           # 六阶段流程、嵌套环、外部锚点
+├─ workflows/           # 六阶段流程、嵌套环、外部锚点、分支保护盾(git-shield.md)
 └─ docs/任务名/         # 本次任务的 ALIGNMENT/CONSENSUS/DESIGN/TASK/ACCEPTANCE/FINAL/TODO/TRACE
 ```
 

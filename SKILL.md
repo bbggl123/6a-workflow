@@ -1,6 +1,6 @@
 ---
 name: 6a-workflow
-description: "Agentic SDLC 落地工作流（6A），平台无关。This skill activates when the user's request starts with \"@6A\" or \"6A\", or when the user asks to run an Agentic software-development lifecycle workflow with role separation, quality gates, anti-hallucination checks, credibility labeling, PR governance, and human-in-the-loop approval. It turns a vague task into a grounded, auditable agent pipeline: Align, Architect, Atomize, Approve, Automate, Assess. The full protocol lives in 6A.md and is agent-agnostic; this file is only the WorkBuddy packaging."
+description: "Agentic SDLC 落地工作流（6A · v3），平台无关。This skill activates when the user's request starts with \"@6A\" or \"6A\", or when the user asks to run an Agentic software-development lifecycle workflow with role separation, quality gates, anti-hallucination checks, credibility labeling, PR governance, human-in-the-loop approval, and (v3) a multi-agent shared-branch protection shield for git ref-reset recovery. It turns a vague task into a grounded, auditable agent pipeline: Align, Architect, Atomize, Approve, Automate, Assess. The full protocol lives in 6A.md and is agent-agnostic; this file is only the WorkBuddy packaging."
 agent_created: true
 ---
 
@@ -35,14 +35,16 @@ agent_created: true
 - **可信度标注（强制）**：关键假设 / 设计决策 / 外部依赖 / 选型建议必须附四行说明（可信度% / 来源 / 盲区 / 建议）。≥80% 正常；60–80% 强制"需人工确认"；<60% 禁止直接输出，交人工。
 - **防幻觉闸门**：信息缺失主动告知并标注「未验证假设」，禁止编造；诱导编造指令直接拒绝。
 - **人机锚点**：阶段4 Approve 须收到明确"确认"才进入执行；分级交还决策权（一级补材料 / 二级停等审核 / 三级高风险人工签字）。
-- **外部锚点**：每阶段至少触碰 1 类外部锚点；最终验收须 ≥3 类不同锚点验证。
+- **外部锚点**：每阶段至少触碰 1 类外部锚点；最终验收须 ≥3 类不同锚点验证（v3 起含 **Git 引用完整性锚**）。
 - **反指标环**：阶段6 验收检查反指标（功能完成率 vs TODO 占位率、测试通过率 vs 断言有效性、速度 vs 可追溯性），防古德哈特定律。
+- **分支保护盾（v3 新增）**：多 Agent 在同一 git 分支并行提交时，Worker 守「消失即停」（绝不 `reset --hard`/`push -f`），引用被环境重置由 Lead 用 `tag + reset --soft` 非破坏恢复。详见 `6A.md` 第七章.8 与 `project-skeleton/workflows/git-shield.md`。
 
 ## 配套资源
 
 - `6A.md` — 完整权威协议（**必须加载**，平台无关）。
 - `adapters/` — Claude / Cursor / 通用 system prompt 的即贴片段（用于非 WorkBuddy 环境）。
 - `project-skeleton/` — ISA 目录范式骨架（Agent.md / agents / knowledge / tools / workflows / docs），在新项目落地 6A 时整体复制。
+- `project-skeleton/workflows/git-shield.md` — **多 Agent 共享分支保护盾**（v3 新增）：并行提交时的引用重置检测、tag+reset --soft 非破坏恢复、Worker「消失即停」防御。多 Agent 团队执行阶段5 前必读。
 
 ## 备注
 

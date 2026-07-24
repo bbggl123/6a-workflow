@@ -19,4 +19,5 @@
 ## 调度规则
 - 守门员 Agent 跨阶段常驻，任何阶段可信度标注缺失/失真 → 直接判不合格。
 - 每阶段过质量门控方可进入下一阶段；不过则循环回退本阶段起点。
-- 完整协议见仓库根 `6A.md` 与本项目 `workflows/main-pipeline.md`。
+- **多 Agent 阶段5**：多个执行 Agent 在同一 git 分支并行提交时，启用 `workflows/git-shield.md` 保护盾（Worker 守「消失即停」，Lead 用 tag + reset --soft 非破坏恢复）。
+- 完整协议见仓库根 `6A.md` 与本项目 `workflows/main-pipeline.md`、`workflows/git-shield.md`。

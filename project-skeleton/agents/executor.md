@@ -21,3 +21,9 @@
 - 单任务连续失败 ≥3 轮 → 触发阶段4 二级回环交人工。
 - 所有代码变更以 PR / 分支提交，经 CI 门禁通过后合入。
 - 敏感信息一律走 `.env`，禁止硬编码。
+
+## Git 防御红线（多 Agent 共享分支必守 · 见 `workflows/git-shield.md`）
+- **绝不**运行 `git reset --hard`、`git push -f`、`git branch -D/-f`、`git checkout -- .`、`git clean -f`。
+- **绝不**创建 `.bundle` 或 `_v2_*` / `_verify_*` / `_ft*` / `_clone_test*` / `commit_err.txt` / `.git` 拷贝等垃圾文件。正常提交：`git add <files>` + `git commit -m "Txx: ..."`。
+- **上下文安全**：不把完整 TASK/DESIGN 读入上下文，只读所需源文件或行区间，防上下文溢出。
+- **消失即停（Stop-on-disappearance）**：若提交后提交消失、HEAD 被外部改动、或刚写文件被删——**立即停止**，不重建历史、不强推、不重试对抗，向 Lead 报告观察到的确切现象，由 Lead 非破坏性恢复（tag + reset --soft）。

@@ -1,8 +1,12 @@
 # 6A Workflow — 把"模糊需求"变成"可审计交付物"的 Agentic 开发工作流
 
-> 一句话：**6A 给 AI Agent 套上一层"确定性外壳"**——让它不再是"你说一句、它写一堆、对错全靠运气"，而是像一支纪律严明的工程团队那样，按 `对齐 → 设计 → 拆解 → 审批 → 执行 → 验收` 六步推进，每步都有质量门控、防幻觉校验和人工关键点。
+> 当前版本：**v4**（内置项目级记忆系统 + Claude Opus 工程规范增强）
+
+> 一句话：**6A 给 AI Agent 套上一层"确定性外壳"**——让它不再是"你说一句、它写一堆、对错全靠运气"，而是像一支纪律严明的工程团队那样，按 `对齐 → 设计 → 拆解 → 审批 → 执行 → 验收` 六步推进，每步都有质量门控、防幻觉校验、持久化记忆和人工关键点。
 
 **六阶段**：`Align（对齐）→ Architect（架构）→ Atomize（原子化）→ Approve（审批）→ Automate（执行）→ Assess（验收）`
+
+**v4 核心特性**：**项目级持久化记忆系统**——工作流激活瞬间在项目内部署 `.6a-memory/`，每操作一步同步一步（带时间戳），从根本上解决长任务上下文溢出导致的"失忆"问题。
 
 ---
 
@@ -103,6 +107,44 @@
 
 > 完整操作手册见 [`project-skeleton/workflows/git-shield.md`](./project-skeleton/workflows/git-shield.md) 与 `6A.md` 第七章.8。多 Agent 团队执行前必读。
 
+---
+
+## 五之三、项目级持久化记忆系统（v4 核心新增）
+
+LLM 上下文窗口有限，长任务中 AI 极易"失忆"——忘记之前的决策、重复读同一个文件、忘记用户已确认的约定、中断后续接不上。
+
+6A v4 内置**项目级记忆系统**解决这个问题：
+
+**工作机制**：
+1. **激活即部署**：6A 启动第一件事就是在项目根创建 `.6a-memory/` 目录（加入 `.gitignore`，本地工作记忆不入库）
+2. **每步同步（Write-ahead Memory Logging）**：读取文件、做决策、改代码、跑命令、遇错误、用户确认——每个关键动作**立即写入记忆**，带精确到秒的时间戳
+3. **结构化存储**：
+   - `session/` — 会话日志（按启动时间命名，追加式记录每一步操作）
+   - `context/` — 项目画像（技术栈、代码库索引、业务领域模型）
+   - `decisions/DECS-NNN.md` — 决策日志（每个关键决策单独文件，不可变）
+   - `progress/` — 当前阶段、已完成任务、阻塞项（实时更新）
+   - `lessons/` — 本次任务发现的坑和有效技巧
+4. **上下文恢复**：续接任务或"失忆"时，按 INDEX → current-phase → 最近 session → decisions 顺序从磁盘读取恢复，**禁止凭记忆猜测**
+5. **门控强制**：每个阶段质量门控新增"记忆完整性检查"，关键操作无记录则门控不通过
+
+> 记忆是纯文本 Markdown，可人工审阅、可跨会话恢复、可git diff。详细使用手册见 [`project-skeleton/best-practices/memory-system.md`](./project-skeleton/best-practices/memory-system.md)。
+
+---
+
+## 五之四、工程规范增强（v4 新增 · 融合 Claude Opus 5 实践）
+
+v4 从 Claude Opus 5 system prompt 中提炼了通用工程最佳实践，融入 6A 主协议：
+
+| 规范领域 | 核心要求 |
+|---|---|
+| **工具使用纪律** | 先读后写（编辑前必须读最新内容）、精确替换（old_str唯一匹配）、参数顺序强制、编辑后立即验证、禁止破坏性操作（`reset --hard`/`push -f`/`rm -rf`）、命令失败2次停 |
+| **文件操作三层分离** | 只读输入区/工作区/交付输出区职责分明、新建前检查存在性、绝对路径、UTF-8/LF编码、大文件分段处理、临时文件清理 |
+| **版权与引用合规** | 释义优先不直接复制、单次引用≤15英文词/≤10汉字、每来源最多1引、禁全文复制/结构镜像、`[$TRAE_REF](url)` 行内引用 |
+| **搜索策略** | 当前状态类问题必搜（即使"记得"也要验证）、query简短精确带版本/年份、错误信息用原文、URL必fetch |
+| **错误恢复** | 承认错误立即修正不找借口、不卑不亢不过度道歉、不确定就说"我查一下"不硬猜、不用TODO占位掩盖未实现 |
+
+> 各规范详细说明见 [`project-skeleton/best-practices/`](./project-skeleton/best-practices/) 下的四份实践手册。
+
 > 完整协议（含每阶段详细步骤、门控清单、嵌套环拓扑图、锚点规则、PR/CI 治理）见 **[`6A.md`](./6A.md)** —— 这是本工作流的唯一权威来源。
 
 ---
@@ -113,10 +155,13 @@
 
 | 文件 / 目录 | 用途 |
 |---|---|
-| **`6A.md`** | **权威协议**（唯一真相源），任何 Agent 加载它即可运行 6A |
+| **`6A.md`** | **权威协议**（唯一真相源，v4版本），任何 Agent 加载它即可运行 6A |
 | `SKILL.md` | WorkBuddy 用的接入壳（指向 `6A.md`） |
-| `adapters/` | 其他平台的即贴片段：Claude / Cursor / 通用 system prompt |
+| `adapters/claude.md` | Claude 专用接入片段（v4增强，融合Opus 5行为约束） |
+| `adapters/cursor.md` | Cursor 接入片段 |
+| `adapters/generic.md` | 通用 system prompt 接入片段 |
 | `project-skeleton/` | 在任意项目里落地 6A 的 ISA 目录骨架 |
+| `project-skeleton/best-practices/` | v4新增4份实践手册：工具使用、搜索引用、文件操作、记忆系统 |
 | `project-skeleton/workflows/git-shield.md` | **多 Agent 共享分支保护盾**（v3）：引用重置检测 + 非破坏恢复 + Worker 防御红线 |
 
 ### 安装方式（任选其一）
@@ -152,17 +197,29 @@ cp -r 6a-workflow ~/.workbuddy/skills/6a-workflow
 
 ```
 your-project/
+├─ .6a-memory/           # v4新增：项目级记忆系统（自动部署，加入.gitignore）
+│   ├─ INDEX.md          # 记忆总索引
+│   ├─ session/          # 会话日志（按启动时间命名）
+│   ├─ context/          # 项目画像（技术栈、代码库、业务领域）
+│   ├─ decisions/        # 决策日志
+│   ├─ progress/         # 当前进度
+│   └─ lessons/          # 经验教训
+│
 ├─ Agent.md              # 路由：识别 @6A 前缀、区分阶段、选择执行角色
 ├─ readme.md            # 执行边界、完成证据、巡视与维护规则
 ├─ agents/              # 四角色描述：职责、必读文档、约束、输出
 ├─ best-practices/      # 各角色范例与反例
+│   ├─ tool-usage.md    # v4新增：工具使用最佳实践
+│   ├─ search-citation.md # v4新增：搜索与引用规范
+│   ├─ file-operations.md # v4新增：文件操作纪律
+│   └─ memory-system.md # v4新增：记忆系统使用手册
 ├─ knowledge/           # 共享状态（红线库 / 反模式 / 成功模式 / 纠正记录）
 ├─ tools/               # 各角色可用/禁用工具集与约束
 ├─ workflows/           # 六阶段流程、嵌套环、外部锚点、分支保护盾(git-shield.md)
 └─ docs/任务名/         # 本次任务的 ALIGNMENT/CONSENSUS/DESIGN/TASK/ACCEPTANCE/FINAL/TODO/TRACE
 ```
 
-其中 `knowledge/` 是**跨任务的共享记忆**：每次任务启动前先读红线库避免重复踩坑，任务结束后把新教训沉淀回去——越用越聪明。
+其中 `knowledge/` 是**跨任务的共享记忆**：每次任务启动前先读红线库避免重复踩坑，任务结束后把新教训沉淀回去——越用越聪明。`.6a-memory/` 是**单次/多会话的工作记忆**，记录本次任务的每一步操作，解决长上下文失忆问题。
 
 ---
 
@@ -175,8 +232,10 @@ your-project/
 
 ## 参考来源
 
-6A 的工程化设计吸收了以下社区洞察：
+6A 的工程化设计吸收了以下社区洞察与实践：
 - **五层 AI 系统架构**（Prompt → Context → Harness → Loop → Graph）
 - **Static Graph + Dynamic Inner Loop**：静态骨架 + 动态内核
 - **Graph of Loops** 与单 Loop 的四大致命缺陷（古德哈特 / 向上盲区 / 结构冲突 / 测量衰退）
 - **Grounding Anchors（外部锚点）** 与 Shared State（共享状态）思想
+- **Claude Opus 5 System Prompt**（Anthropic）：工具使用纪律、文件操作规范、版权合规、错误应对哲学、记忆管理模式
+- **git-branch-reset-shield** 实战沉淀：多 Agent 并行提交的引用完整性保护

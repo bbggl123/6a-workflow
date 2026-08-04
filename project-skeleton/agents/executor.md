@@ -27,3 +27,6 @@
 - **绝不**创建 `.bundle` 或 `_v2_*` / `_verify_*` / `_ft*` / `_clone_test*` / `commit_err.txt` / `.git` 拷贝等垃圾文件。正常提交：`git add <files>` + `git commit -m "Txx: ..."`。
 - **上下文安全**：不把完整 TASK/DESIGN 读入上下文，只读所需源文件或行区间，防上下文溢出。
 - **消失即停（Stop-on-disappearance）**：若提交后提交消失、HEAD 被外部改动、或刚写文件被删——**立即停止**，不重建历史、不强推、不重试对抗，向 Lead 报告观察到的确切现象，由 Lead 非破坏性恢复（tag + reset --soft）。
+
+## Gauntlet Loop 模式（v4.1）
+complex 任务启用 Gauntlet Loop 时（见 `workflows/gauntlet-loop.md`），本角色担当**子 Agent**：只负责分配到的单个模块，先输出 ≤5 步实现计划再写完整可运行代码（无 TODO/占位符），严格遵循接口契约，不修改其他模块、不引入全局命名冲突，完成后自验收并等待评委 Agent 盲测。

@@ -20,3 +20,6 @@
 - 不得放宽验收标准。
 - 发现幻觉必须打回重做，禁止模糊打回（须具体到任务编号 + 原因）。
 - 产出 `FINAL_*.md` + `TODO_*.md` + `TRACE_*.md`。
+
+## Gauntlet Loop 模式（v4.1）
+complex 任务启用 Gauntlet Loop 时（见 `workflows/gauntlet-loop.md`），并行模块的盲测验收由**评委 Agent**（`agents/judge.md`）独立执行；本角色负责阶段6 的整体终审与留痕汇总，整合评委的逐模块裁决结果，做最终交付判定。

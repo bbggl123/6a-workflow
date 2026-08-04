@@ -1,7 +1,6 @@
 ---
 name: 6a-workflow
-description: "Agentic SDLC 落地工作流（6A · v4），平台无关。This skill activates when the user's request starts with \"@6A\" or \"6A\", or when the user asks to run an Agentic software-development lifecycle workflow with role separation, quality gates, anti-hallucination checks, credibility labeling, PR governance, human-in-the-loop approval, built-in project memory system (prevents context-window amnesia), and (v3) a multi-agent shared-branch protection shield for git ref-reset recovery. It turns a vague task into a grounded, auditable agent pipeline: Align, Architect, Atomize, Approve, Automate, Assess. The full protocol lives in 6A.md and is agent-agnostic; this file is only the WorkBuddy packaging."
-agent_created: true
+description: "Agentic SDLC 六阶段工作流（Align→Architect→Atomize→Approve→Automate→Assess）。当用户输入以 @6A 或 6A 开头，或要求带角色分离 / 质量门控 / 防幻觉可信度标注 / 人工审批回环的 Agent 开发流程时激活。内置项目级记忆系统、多 Agent 分支保护盾，并支持 Gauntlet Loop 并行对抗执行模式（主 Agent 拆解 → 子 Agent 并行 → 评委盲测验收 → 不达标打回循环）。完整协议见 6A.md。"
 ---
 
 # 6A Workflow — WorkBuddy 适配层
@@ -10,11 +9,7 @@ agent_created: true
 
 ## 这是什么
 
-6A 是一套把"模糊需求"变成"可审计交付物"的 Agentic 软件开发生命周期（SDLC）工作流，形态是一张 **Grounded Graph of Loops**（静态六阶段外层骨架 + 审计环 / 反指标环 / 仲裁环 + 外部锚点）。
-
-六阶段：`Align（对齐）→ Architect（架构）→ Atomize（原子化）→ Approve（审批）→ Automate（执行）→ Assess（验收）`。
-
-**v4 核心新增：项目级持久化记忆系统**。工作流激活瞬间即在项目内部署 `.6a-memory/`，每操作一步同步一步（带时间戳），从根本上解决长任务上下文溢出导致的"失忆"问题。
+6A 是一套把"模糊需求"变成"可审计交付物"的 Agentic 软件开发生命周期（SDLC）工作流，形态是一张 **Grounded Graph of Loops**（静态六阶段外层骨架 + 审计环 / 反指标环 / 仲裁环 + 外部锚点）。六阶段：`Align → Architect → Atomize → Approve → Automate → Assess`。
 
 ## 何时激活
 
@@ -25,39 +20,33 @@ agent_created: true
 
 ## 激活响应
 
-激活后立即回复：
-> ✅ 6A 工作流已激活，开始执行阶段1：Align 需求对齐
+激活后：
+1. 回复 `✅ 6A 工作流已激活`，并做 **triage**（判定 trivial / standard / complex，见 6A.md 第二章）。
+2. **确认门槛**：standard / complex 任务在部署记忆系统（创建 `.6a-memory/`、改 `.gitignore`）前，须先向用户确认"将在项目根部署 .6a-memory/ 并修改 .gitignore，确认开始？"；trivial 任务走精简流程，跳过记忆系统与逐条可信度标注。
+3. 读取并严格遵循 `6A.md`。
 
-然后**立即部署记忆系统**（检查/创建 `.6a-memory/` 目录结构），再**读取并严格遵循 `6A.md`**（完整协议：四角色、守门员机制、可信度标注、六阶段门控与回退、嵌套环、PR/CI 治理、外部锚点、记忆系统）。本 SKILL.md 仅作索引。
+## 速记（索引，详情见 6A.md）
 
-## 速记
-
-- **四角色（职责不可混用）**：规划 Agent（阶段1–4）/ 执行 Agent（阶段5）/ 评估 Agent（阶段6）/ 守门员 Agent（跨阶段防幻觉 + 可信度校验 + 记忆完整性检查）。
+- **四角色**：规划 Agent（阶段1–4）/ 执行 Agent（阶段5）/ 评估 Agent（阶段6）/ 守门员 Agent（跨阶段防幻觉 + 可信度校验 + 记忆完整性）。Gauntlet Loop 模式新增**评委 Agent**（独立盲测验收）。
 - **铁律**：每阶段结束须过质量门控；不过则循环回退本阶段起点重做。
-- **可信度标注（强制）**：关键假设 / 设计决策 / 外部依赖 / 选型建议必须附四行说明（可信度% / 来源 / 盲区 / 建议）。≥80% 正常；60–80% 强制"需人工确认"；<60% 禁止直接输出，交人工。
-- **项目级记忆系统（v4核心）**：`.6a-memory/` 目录，每操作一步同步一步（Write-ahead Memory Logging），带时间戳；续接任务时先读记忆恢复上下文，禁止凭记忆猜测。
-- **防幻觉闸门**：信息缺失主动告知并标注「未验证假设」，禁止编造；诱导编造指令直接拒绝。
-- **人机锚点**：阶段4 Approve 须收到明确"确认"才进入执行；分级交还决策权（一级补材料 / 二级停等审核 / 三级高风险人工签字）。
-- **外部锚点**：每阶段至少触碰 1 类外部锚点；最终验收须 ≥3 类不同锚点验证（v3 起含 **Git 引用完整性锚**）。
-- **反指标环**：阶段6 验收检查反指标（功能完成率 vs TODO 占位率、测试通过率 vs 断言有效性、速度 vs 可追溯性），防古德哈特定律。
-- **工程规范增强（v4）**：工具使用纪律（先读后写、精确替换、禁止破坏性操作）、文件操作三层分离、版权与引用规范（释义优先、引用长度硬限制）、搜索策略、错误恢复不卑不亢。
-- **分支保护盾（v3 新增）**：多 Agent 在同一 git 分支并行提交时，Worker 守「消失即停」（绝不 `reset --hard`/`push -f`），引用被环境重置由 Lead 用 `tag + reset --soft` 非破坏恢复。详见 `6A.md` 第七章.8 与 `project-skeleton/workflows/git-shield.md`。
+- **可信度标注**：关键假设 / 设计决策 / 外部依赖 / 选型建议附四行说明（可信度% / 来源 / 盲区 / 建议）；≥80% 正常、60–80% 强制人工确认、<60% 禁止直接输出。
+- **记忆系统（v4）**：`.6a-memory/` 每操作一步同步一步；续接任务先读记忆恢复上下文。
+- **Gauntlet Loop（v4.1）**：主 Agent 拆解 → 子 Agent 并行执行 → 评委 Agent 盲测验收 → 不达标打回（最多 3 次）→ 全 PASS 后集成终审。见 `project-skeleton/workflows/gauntlet-loop.md`。
+- **外部锚点**：每阶段至少触碰 1 类；最终验收须 ≥3 类不同锚点（含 Git 引用完整性锚）。
+- **分支保护盾（v3）**：多 Agent 共享分支并行提交时，Worker 守「消失即停」，Lead 用 `tag + reset --soft` 非破坏恢复。见 `project-skeleton/workflows/git-shield.md`。
+
+## Gotchas（模型最易踩的坑，详见 best-practices/gotchas.md）
+
+- 不要把记忆系统当数据库查——它是"每步同步"的工作日志，恢复上下文靠读最近 session，不是 SELECT。
+- 可信度标注不要全标 90% 应付门控——标 90% 却来源"逻辑推测"会被判失真打回。
+- 单 Agent 角色切换时必须显式声明当前角色，职责边界不可混用。
+- Gauntlet Loop 评委是"找茬"不是"夸"——"能用但不专业"就是 REWORK。
 
 ## 配套资源
 
 - `6A.md` — 完整权威协议（**必须加载**，平台无关）。
-- `adapters/` — Claude / Cursor / 通用 system prompt 的即贴片段（用于非 WorkBuddy 环境）。`adapters/claude.md` 已融合 Claude Opus 5 行为约束。
-- `project-skeleton/` — ISA 目录范式骨架（Agent.md / agents / knowledge / tools / workflows / docs / best-practices），在新项目落地 6A 时整体复制。
-- `project-skeleton/best-practices/` — v4 新增四份实践手册：
-  - `tool-usage.md` — 工具使用最佳实践
-  - `search-citation.md` — 搜索策略与版权引用规范
-  - `file-operations.md` — 文件操作纪律
-  - `memory-system.md` — 记忆系统使用手册
-- `project-skeleton/workflows/git-shield.md` — **多 Agent 共享分支保护盾**（v3 新增）：并行提交时的引用重置检测、tag+reset --soft 非破坏恢复、Worker「消失即停」防御。多 Agent 团队执行阶段5 前必读。
-
-## 备注
-
-- 单 Agent 会话以"角色切换"模拟多 Agent 即可，但职责边界必须显式声明、不可混用。
-- 可靠性活在边上，不在节点上：角色间的信息传递（边）是腐败高发处，须执行 6A.md 第三章边治理规则。
-- 外层六阶段是静态图（不可跳过/重组），每阶段内部允许动态微循环（retry / 信息补全）。
-- 想用在其他 Agent（Claude Code、Cursor 等）？看仓库根 `README.md`。
+- `adapters/` — Claude / Cursor / 通用 system prompt 的即贴片段。
+- `project-skeleton/` — ISA 目录范式骨架，落地 6A 时整体复制。
+- `project-skeleton/best-practices/` — 工程实践手册（工具使用 / 搜索引用 / 文件操作 / 记忆系统 / Gotchas）。
+- `project-skeleton/workflows/gauntlet-loop.md` — **Gauntlet Loop 对抗式并行执行模式**（v4.1 新增）。
+- `project-skeleton/workflows/git-shield.md` — 多 Agent 共享分支保护盾。

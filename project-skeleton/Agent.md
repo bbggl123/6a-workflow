@@ -6,9 +6,19 @@
 - 用户输入以 `@6A` 或 `6A` 开头时激活。
 - 激活后回复：`✅ 6A 工作流已激活，开始执行阶段1：Align 需求对齐`
 
-## 激活后第一步：记忆系统（v4）
+## 激活后第一步：Triage（v4.1）
 
-**激活后必须立即执行**：
+激活后先判任务规模（见 6A.md 2.1）：
+- **trivial**（typo / 单行 bugfix / 纯格式）→ 精简流程：跳过记忆系统、跳过逐条可信度标注，阶段1–4 压缩为口头确认。拿不准就升级到 standard。
+- **standard** → 完整 6A，记忆系统可选。
+- **complex**（多模块 / 架构级 / 多 Agent 并行）→ 完整 6A + 记忆系统 + 可选 Gauntlet Loop。
+
+## 激活后第二步：确认门槛 + 记忆系统（v4.1）
+
+standard / complex 任务部署记忆系统前须先向用户确认：
+> 即将在项目根部署 `.6a-memory/` 记忆目录并修改 `.gitignore`，确认开始？
+
+收到确认后：
 1. 检查项目根是否存在 `.6a-memory/` 目录
 2. 若不存在：创建完整目录结构并初始化（参考 `best-practices/memory-system.md`）
 3. 若存在：读取 `INDEX.md` → `progress/current-phase.md` → 最近 session 日志，恢复上下文
@@ -34,4 +44,5 @@
 - **每操作一步同步一步记忆**：读取、决策、修改、运行命令、遇到错误——每个关键动作立即写入 session 日志。
 - **上下文恢复优先读记忆**：不确定之前做了什么时，先读 `.6a-memory/` 而非凭记忆猜测。
 - **多 Agent 阶段5**：多个执行 Agent 在同一 git 分支并行提交时，启用 `workflows/git-shield.md` 保护盾（Worker 守「消失即停」，Lead 用 tag + reset --soft 非破坏恢复）。
-- 完整协议见仓库根 `6A.md` 与本项目 `workflows/main-pipeline.md`、`workflows/git-shield.md`。
+- **Gauntlet Loop 模式（v4.1）**：complex 任务、模块边界清晰且平台支持子 Agent 分发时，阶段5 可启用 `workflows/gauntlet-loop.md`——主 Agent 拆解 → 子 Agent 并行 → 评委 Agent（`agents/judge.md`）盲测验收 → 不达标打回（最多 3 次）→ 全 PASS 后集成终审。阶段4 Approve 仍是必经人工关卡。
+- 完整协议见仓库根 `6A.md` 与本项目 `workflows/main-pipeline.md`、`workflows/git-shield.md`、`workflows/gauntlet-loop.md`。

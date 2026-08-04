@@ -34,7 +34,7 @@ standard / complex 任务部署记忆系统前须先向用户确认：
 | 2 Architect | 规划 Agent | DESIGN | 架构决策写入 `decisions/DECS-*` |
 | 3 Atomize | 规划 Agent | TASK | 任务清单同步到 `progress/` |
 | 4 Approve | 规划 Agent + 人工 | 审批签字（HITL 锚点） | 审批结果记录 `[APPROVE]` |
-| 5 Automate | 执行 Agent | 代码 + ACCEPTANCE | 每步Inner Loop同步记忆（见6A.md 阶段5） |
+| 5 Automate | 执行 Agent | 代码 + ACCEPTANCE | 每步Inner Loop同步记忆（见 `references/6A-phases.md` 阶段5） |
 | 6 Assess | 评估 Agent | FINAL / TODO / TRACE | 经验沉淀到 `lessons/`，最终同步到 `knowledge/` |
 
 ## 调度规则
@@ -45,4 +45,6 @@ standard / complex 任务部署记忆系统前须先向用户确认：
 - **上下文恢复优先读记忆**：不确定之前做了什么时，先读 `.6a-memory/` 而非凭记忆猜测。
 - **多 Agent 阶段5**：多个执行 Agent 在同一 git 分支并行提交时，启用 `workflows/git-shield.md` 保护盾（Worker 守「消失即停」，Lead 用 tag + reset --soft 非破坏恢复）。
 - **Gauntlet Loop 模式（v4.1）**：complex 任务、模块边界清晰且平台支持子 Agent 分发时，阶段5 可启用 `workflows/gauntlet-loop.md`——主 Agent 拆解 → 子 Agent 并行 → 评委 Agent（`agents/judge.md`）盲测验收 → 不达标打回（最多 3 次）→ 全 PASS 后集成终审。阶段4 Approve 仍是必经人工关卡。
-- 完整协议见仓库根 `6A.md` 与本项目 `workflows/main-pipeline.md`、`workflows/git-shield.md`、`workflows/gauntlet-loop.md`。
+- **确定性脚本（v4.2）**：记忆完整性 / 可信度校验 / 引用重置检测 / 反指标计算由 `scripts/` 脚本承载，各节点先跑脚本拿事实再判断；**生命周期 Hook**（`hooks/`）在阶段进入/退出/门控失败/不可逆操作时自动触发固定动作，详见 `references/6A-hooks.md`。
+- **两种专家协作（v4.2）**：6A 落地需 AI 工程师 + 领域专家协作，领域判断标准不能靠推测，须通过访谈和真实样例补齐 knowledge 红线库。
+- 完整协议见仓库根 `6A.md`（索引壳）与 `references/` 分章文件，以及本项目 `workflows/main-pipeline.md`、`workflows/git-shield.md`、`workflows/gauntlet-loop.md`。

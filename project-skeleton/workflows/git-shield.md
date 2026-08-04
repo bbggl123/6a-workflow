@@ -72,6 +72,6 @@
 | 阶段5 Automate（执行层） | Worker 防御红线常驻；提交流程收敛为 `git add + git commit` |
 | 边治理：执行 → 执行（并行 Worker） | 「消失即停」防止边上的引用腐败扩散 |
 | 边治理：执行 → 评估 | PR + CI 前先确认引用完整性（HEAD == 预期后代） |
-| 物理验证锚点（第七章.7） | 新增 **Git 引用完整性锚点**：以 `cat-file` / `diff --stat` 客观校验，不依赖 AI 自述 |
+| 物理验证锚点（`references/6A-engineering.md` 7.7） | 新增 **Git 引用完整性锚点**：以 `cat-file` / `diff --stat` 客观校验，不依赖 AI 自述 |
 | 仲裁环 / 恢复动作 | Lead 串行化恢复即一次仲裁：先停 Worker，再 tag+reset --soft |
 | knowledge/anti-patterns.md | 收录「引用重置误判为数据丢失」「Worker 对抗式强推」两个反模式 |

@@ -51,5 +51,6 @@ standard / complex 任务部署记忆系统前须先向用户确认：
 - **WHAT-only 门控（v4.3）**：Align 产出物（含输出契约）禁止含实现技术选型，技术栈留到 Architect。
 - **并行标注（v4.3）**：Atomize 每任务标「可并行 / 依赖前置 [Txx]」；标注「可并行」不等于自动并行，须主 Agent 显式派发（见 Gotchas #12）。
 - **on-task-complete Hook（v4.3）**：阶段5 单任务完成时触发，校验实质产出 vs 契约、progress 勾选、检测「制造干活的假象」、提醒派发后续并行任务。
+- **智能小队协作模式（v4.4）**：standard/complex 任务在阶段3 Atomize 拆解后，队长为每个任务/任务组按 `references/6A-squad.md` 决策树选择 8 种协作模式之一（① 路由 ② 专家会诊 ③ 圆桌讨论 ④ 并行 ⑤ 投票 ⑥ 接力 ⑦ 生产评审 ⑧ 红蓝对抗），记录在 TASK 文档「协作模式」列，阶段5 前按 `workflows/squad-modes.md` 模板派发。同一任务不同阶段可切换模式。平台不支持子 Agent 分发时按 10.6 降级。Gauntlet Loop 仍是 complex 任务并行+评审的推荐预设组合。
 - **两种专家协作（v4.2）**：6A 落地需 AI 工程师 + 领域专家协作，领域判断标准不能靠推测，须通过访谈和真实样例补齐 knowledge 红线库。
-- 完整协议见仓库根 `6A.md`（索引壳）与 `references/` 分章文件，以及本项目 `workflows/main-pipeline.md`、`workflows/git-shield.md`、`workflows/gauntlet-loop.md`。
+- 完整协议见仓库根 `6A.md`（索引壳）与 `references/` 分章文件，以及本项目 `workflows/main-pipeline.md`、`workflows/git-shield.md`、`workflows/gauntlet-loop.md`、`workflows/squad-modes.md`。

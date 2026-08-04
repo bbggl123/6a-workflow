@@ -1,12 +1,12 @@
 # 6A Workflow — 把"模糊需求"变成"可审计交付物"的 Agentic 开发工作流
 
-> 当前版本：**v4.3**（Constitution 共享约束层 + Clarify 主动提问 + WHAT-only 门控 + 并行标注 + on-task-complete 任务粒度 Hook）
+> 当前版本：**v4.4**（智能小队 8 种协作模式 + 跨阶段模式自动选择）
 
 > 一句话：**6A 给 AI Agent 套上一层"确定性外壳"**——让它像一支纪律严明的工程团队那样，按 `对齐 → 设计 → 拆解 → 审批 → 执行 → 验收` 六步推进，每步都有质量门控、防幻觉校验、持久化记忆和人工关键点。
 
 **六阶段**：`Align（对齐）→ Architect（架构）→ Atomize（原子化）→ Approve（审批）→ Automate（执行）→ Assess（验收）`
 
-> 本 README 面向人讲"何时用 / 主要功能 / 风险 / 边界 / 安装"。完整协议细则（门控清单、嵌套环、锚点规则、Gauntlet Loop 全文）见 **[`6A.md`](./6A.md)** 总索引 + **[`references/`](./references/)** 分章文件 —— 唯一权威来源，渐进式加载。
+> 本 README 面向人讲"何时用 / 主要功能 / 风险 / 边界 / 安装"。完整协议细则（门控清单、嵌套环、锚点规则、Gauntlet Loop 全文、智能小队 8 种协作模式）见 **[`6A.md`](./6A.md)** 总索引 + **[`references/`](./references/)** 分章文件 —— 唯一权威来源，渐进式加载。
 
 ---
 
@@ -57,6 +57,7 @@
 - **WHAT-only 门控（v4.3）**：Align 产出物禁止含技术选型，技术栈留到 Architect，WHAT/HOW 显式分离。
 - **并行标注（v4.3）**：Atomize 每任务标「可并行 / 依赖前置 [Txx]」，衔接 Gauntlet 子任务派发。
 - **on-task-complete Hook（v4.3）**：任务粒度检查点（细化 v4.2 阶段粒度 Hook），校验实质产出 vs 契约、检测「制造干活的假象」、提醒派发后续并行任务；Gotchas 吸收 3 条 Spec Kit 真实坑。
+- **智能小队协作模式（v4.4）**：8 种协作模式（路由/专家会诊/圆桌讨论/并行/投票/接力/生产评审/红蓝对抗）+ 模式选择决策树。队长在阶段3 拆解后自动选择最合适模式派发，支持同一任务不同阶段切换模式。Gauntlet Loop 重新定位为「并行+生产评审」的预设组合特例。详见 `references/6A-squad.md` 与 `project-skeleton/workflows/squad-modes.md`。
 
 > 各特性的完整规则、门控清单、阈值表见 [`6A.md`](./6A.md) 总索引与 [`references/`](./references/) 对应分章文件，本 README 不复述。
 

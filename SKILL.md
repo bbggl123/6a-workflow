@@ -37,6 +37,7 @@ description: "Agentic SDLC 六阶段工作流（Align→Architect→Atomize→Ap
 - **可信度标注**：关键假设 / 设计决策 / 外部依赖 / 选型建议附四行说明（可信度% / 来源 / 盲区 / 建议）；≥80% 正常、60–80% 强制人工确认、<60% 禁止直接输出。
 - **记忆系统（v4）**：`.6a-memory/` 每操作一步同步一步；续接任务先读记忆恢复上下文。
 - **Gauntlet Loop（v4.1）**：主 Agent 拆解 → 子 Agent 并行执行 → 评委 Agent 盲测验收 → 不达标打回（最多 3 次）→ 全 PASS 后集成终审。见 `project-skeleton/workflows/gauntlet-loop.md`。
+- **智能小队协作模式（v4.4）**：8 种协作模式（路由/专家会诊/圆桌讨论/并行/投票/接力/生产评审/红蓝对抗）+ 模式选择决策树。队长在阶段3 拆解后自动选择最合适模式派发，支持同一任务不同阶段切换模式。见 `references/6A-squad.md` 与 `project-skeleton/workflows/squad-modes.md`。
 - **外部锚点**：每阶段至少触碰 1 类；最终验收须 ≥3 类不同锚点（含 Git 引用完整性锚）。
 - **分支保护盾（v3）**：多 Agent 共享分支并行提交时，Worker 守「消失即停」，Lead 用 `tag + reset --soft` 非破坏恢复。见 `project-skeleton/workflows/git-shield.md`。
 
@@ -49,8 +50,8 @@ description: "Agentic SDLC 六阶段工作流（Align→Architect→Atomize→Ap
 
 ## 配套资源
 
-- `6A.md` — 权威协议**总索引**（v4.3，**必须加载**，平台无关）。
-- `references/` — 6A 协议**分章文件**（6A-positioning / 6A-constitution / 6A-roles / 6A-gatekeeper / 6A-phases / 6A-loops / 6A-engineering / 6A-git-shield / 6A-memory / 6A-hooks / 6A-gauntlet / 6A-appendix），按需渐进式加载，激活不全量读入。
+- `6A.md` — 权威协议**总索引**（v4.4，**必须加载**，平台无关）。
+- `references/` — 6A 协议**分章文件**（6A-positioning / 6A-constitution / 6A-roles / 6A-gatekeeper / 6A-phases / 6A-loops / 6A-engineering / 6A-git-shield / 6A-memory / 6A-hooks / 6A-gauntlet / **6A-squad（v4.4 新增）** / 6A-appendix），按需渐进式加载，激活不全量读入。
 - `project-skeleton/CONSTITUTION.md` — 项目级共享约束层模板（v4.3 新增），落地时复制到项目根。
 - `evals/` — 评测用例集（v4.2 新增，v4.3 增 E007/E008），改前建基线、改后批量回归，覆盖常规/边界/历史失败/高风险输入，以 Constitution 为评判准绳。
 - `adapters/` — Claude / Cursor / 通用 system prompt 的即贴片段。
@@ -59,4 +60,5 @@ description: "Agentic SDLC 六阶段工作流（Align→Architect→Atomize→Ap
 - `project-skeleton/scripts/` — 确定性脚本（v4.2 新增）：记忆自检 / 可信度校验 / 引用重置检测 / 反指标计算。
 - `project-skeleton/hooks/` — 生命周期 Hook 脚本（v4.2 新增，v4.3 增 on-task-complete）：on-phase-enter/exit / on-gate-fail / on-irreversible-action / on-task-complete。
 - `project-skeleton/workflows/gauntlet-loop.md` — **Gauntlet Loop 对抗式并行执行模式**（v4.1 新增）。
+- `project-skeleton/workflows/squad-modes.md` — **智能小队 8 种协作模式操作协议**（v4.4 新增）。
 - `project-skeleton/workflows/git-shield.md` — 多 Agent 共享分支保护盾。
